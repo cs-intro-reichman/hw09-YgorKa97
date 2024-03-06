@@ -66,9 +66,14 @@ public class LanguageModel {
 
     // Returns a random character from the given probabilities list.
 	public char getRandomChar(List probs) {
-		// Your code goes here
-		return 0;
-	}
+        // Your code goes here
+        double random = randomGenerator.nextDouble();
+        int i = 0;
+        while (probs.listIterator(i).current.cp.cp < random) {
+            i++;
+        }
+        return probs.get(i).chr;
+    }
 
     /**
 	 * Generates a random text, based on the probabilities that were learned during training. 
@@ -77,10 +82,24 @@ public class LanguageModel {
 	 * @param numberOfLetters - the size of text to generate
 	 * @return the generated text
 	 */
-	public String generate(String initialText, int textLength) {
-		// Your code goes here
-		return null;
-	}
+	 public String generate(String initialText, int textLength) {
+        // Your code goes here
+        if (initialText.length() < windowLength) {
+            return initialText;
+        }
+        String window = initialText.substring(initialText.length() - windowLength);
+        String generateText = window;
+        int lettersNum = textLength + windowLength;
+        while(generateText.length() < lettersNum){
+            List currList = CharDataMap.get(window);
+            if(currList == null){
+                break;
+            }
+            generateText += getRandomChar(currList);
+            window = generateText.substring(generateText.length()- windowLength);
+        }
+        return generateText;
+    }
 
     /** Returns a string representing the map of this language model. */
 	public String toString() {
@@ -91,8 +110,4 @@ public class LanguageModel {
 		}
 		return str.toString();
 	}
-
-    public static void main(String[] args) {
-		// Your code goes here
-    }
 }
